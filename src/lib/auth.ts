@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { MongoClient } from 'mongodb';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
+import { UserRole } from '../auth/enums/user-role.enum';
 
 // Singleton to reuse the same client and auth instance
 let authInstance: { api: any } | null = null;
@@ -36,6 +37,17 @@ async function createAuth() {
       },
       secret: process.env.BETTER_AUTH_SECRET,
       baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+      // Configuração de campos customizados do usuário
+      user: {
+        additionalFields: {
+          role: {
+            type: 'string',
+            required: true,
+            defaultValue: UserRole.INFLUENCER,
+            input: true, // Permite que o campo seja passado no registro
+          },
+        },
+      },
     });
 
     // Ensure methods exist

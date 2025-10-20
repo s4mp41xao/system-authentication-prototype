@@ -1,11 +1,13 @@
-import { Controller, Post, Body, Req, Res } from '@nestjs/common';
+import { Controller, Post, Body, Req, Res, UseGuards } from '@nestjs/common';
 import { createAuth } from '../lib/auth';
 import { SignupDto } from './dto/signup.dto';
 import { SigninDto } from './dto/signin.dto';
+import { PreventOriSignupGuard } from './guards/prevent-ori-signup.guard';
 
 @Controller('auth')
 export class AuthController {
   @Post('signup')
+  @UseGuards(PreventOriSignupGuard) // Previne auto-registro como ORI
   async register(@Body() signupDto: SignupDto, @Res() res) {
     const auth = await createAuth();
     const result = await auth.api.signUpEmail({
@@ -13,6 +15,7 @@ export class AuthController {
         email: signupDto.email,
         password: signupDto.password,
         name: signupDto.name,
+        role: signupDto.role, // Incluindo o role
         callbackURL: '/dashboard',
       },
     });
