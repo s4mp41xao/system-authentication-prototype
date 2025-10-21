@@ -34,4 +34,13 @@ export class AuthController {
     });
     return res.json(result);
   }
+
+  @Post('signout')
+  async logout(@Req() req, @Res() res) {
+    const auth = await createAuth();
+    const result = await auth.api.signOut({
+      headers: req.headers,
+    });
+    return res.json(result);
+  }
 }
